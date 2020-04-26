@@ -85,17 +85,30 @@ class GPXFiles():
         sns.scatterplot(x="longitude",y="latitude",data = self.map)    
     
 
-    def combine( self ):
+    def combine( self , newName="combined" ):
         '''combine all tracks into one.'''
-
-        # this needs some work.
 
         skeleton = self.data[0].raw
         head = skeleton.split("<trkseg>")[0]
+        newCreatorString = "SeanForScience GPX merger"
         
         # include something to update the GPX creator tag AND the Name
-        # clean up the GPX file
-        
+        try:
+            creator = re.findall("gpx creator=\"(.*?)\"",self.data[0].raw)[0]
+            head = head.replace(creator,newCreatorString)
+        except:
+            print("regex error in gpx creator name.")
+
+
+        # rename the file
+        try:
+            oldName = re.findall("<name>(.*?)</name>",self.data[0].raw)[0]
+        except:
+            oldName = newName
+            print("regex error in GPX file name.")
+
+        head = head.replace(oldName,newName)
+
         tail = skeleton.split("</trkseg>")[1]
         body = "\n".join(self.pointsASXML[0].tolist())
         
