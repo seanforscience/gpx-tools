@@ -10,5 +10,3 @@ This is my toolkit for using the GPX file format.
 
 ## TODO
 
-1. I need to update the metadata of the XML file to reflect the fact that it's been recombined.
-2. I need to come up with a new "name" tag for the combined XML file.
