@@ -56,8 +56,9 @@ class GPXFile():
     
     
 class GPXFiles():
-    def __init__( self , filePaths ):
+    def __init__( self , filePaths , outputName = "combined" ):
                 
+        self.outputName = outputName
         self.data = self.loadData( filePaths)
         self.points = pd.concat(list(self.data.apply(lambda x : x.points)))
         self.pointsASXML = pd.concat(list(self.data.apply(lambda x : x.pointsAsXML)))
@@ -85,12 +86,12 @@ class GPXFiles():
         sns.scatterplot(x="longitude",y="latitude",data = self.map)    
     
 
-    def combine( self , newName="combined" ):
+    def combine( self ):
         '''combine all tracks into one.'''
 
         skeleton = self.data[0].raw
         head = skeleton.split("<trkseg>")[0]
-        newCreatorString = "SeanForScience GPX merger"
+        newCreatorString = "SeanForScience GPX toolkit"
         
         # include something to update the GPX creator tag AND the Name
         try:
@@ -104,10 +105,10 @@ class GPXFiles():
         try:
             oldName = re.findall("<name>(.*?)</name>",self.data[0].raw)[0]
         except:
-            oldName = newName
+            oldName = self.outputName
             print("regex error in GPX file name.")
 
-        head = head.replace(oldName,newName)
+        head = head.replace(oldName,self.outputName)
 
         tail = skeleton.split("</trkseg>")[1]
         body = "\n".join(self.pointsASXML[0].tolist())
