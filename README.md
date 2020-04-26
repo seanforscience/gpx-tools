@@ -1,6 +1,10 @@
 # GPX Tools
 
-This is my toolkit for using the GPX file format.
+This is my toolkit for using the GPX file format. It's under development as needed. Presently VERY lightweight.
+
+## Requirements
+
+These objects only really use basic Pandas (pd) functionality  and Regular Expressions (re).
 
 ## Current Offerings
 
@@ -10,3 +14,5 @@ This is my toolkit for using the GPX file format.
 
 ## TODO
 
+1. Try to be more specific about treatment of times
+2. explore possibilities around multiple trip segments
