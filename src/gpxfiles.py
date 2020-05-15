@@ -1,6 +1,7 @@
 import os
 import re
 import pandas as pd
+import datetime as dt
 
 class GPXFile():
     '''Basic object to wrap a given GPX file.'''
@@ -12,8 +13,8 @@ class GPXFile():
         self.name = self.getTag(self.raw,"name")
         self.createTime = self.getTag(self.getTag(self.raw,"metadata"),"time")
         
-        self.points = self.getTrackPoints(self.raw)
-        self.pointsAsXML = pd.DataFrame(self.points.apply(lambda x : self.formatTrackPoint(x) , axis = 1 ))
+        self.points = self.getTrackData(self.raw)
+        self.pointsAsXML = pd.DataFrame(self.getTrackPoints(self.raw).apply(lambda x : self.formatTrackPoint(x) , axis = 1 ))
         
     def getTag( self , field , tagname):
         '''basic XML tag extractor'''
@@ -33,7 +34,15 @@ class GPXFile():
         output["elevation"] = rawPoints.apply(lambda x : self.getTag(x,"ele"))
         output["time"] = rawPoints.apply(lambda x : self.getTag(x,"time"))
         return(output)        
-        
+
+    def getTrackData( self , track ):
+        data = self.getTrackPoints( track ).copy()
+        for field in ["latitude","longitude","elevation"]:
+            data[field] = data[field].apply(float)
+        data["time"] = data["time"].apply(lambda t : dt.datetime.strptime(t,"%Y-%m-%dT%H:%M:%SZ")) 
+        # note. Z here stands for zulu, which means UTC +0
+
+        return(data)
         
     def load( self , filePath ):
         '''load the raw GPX file as text.'''
