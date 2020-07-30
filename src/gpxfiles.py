@@ -40,6 +40,7 @@ class GPXFile():
         for field in ["latitude","longitude","elevation"]:
             data[field] = data[field].apply(float)
         data["time"] = data["time"].apply(lambda t : dt.datetime.strptime(t,"%Y-%m-%dT%H:%M:%SZ")) 
+        data["source"] = self.filename
         # note. Z here stands for zulu, which means UTC +0
 
         return(data)
@@ -92,7 +93,9 @@ class GPXFiles():
         '''if you have seaborn installed, here's a quick way to visualize your tracks as a map.'''
 
         import seaborn as sns        
-        sns.scatterplot(x="longitude",y="latitude",data = self.map)    
+        import matplotlib.pyplot as plt # needed to call the visual
+        sns.scatterplot(x="longitude",y="latitude",data = self.map)
+        plt.show()
     
 
     def combine( self ):
