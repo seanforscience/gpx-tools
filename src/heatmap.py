@@ -5,7 +5,8 @@ from gpxfiles import GPXFile
 class HeatMap():
     def __init__( self , data = pd.DataFrame() ):
         self.data = data
-        self.dress()
+        if len(self.data) > 0:
+            self.dress()
         
     def sources( self ):
         try:
