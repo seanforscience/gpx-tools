@@ -1,7 +1,29 @@
 import os
 import re
+import math
 import pandas as pd
 import datetime as dt
+
+
+
+def haversine( point1 , point2 ):
+    '''haversine distance formula.'''
+    lat1, lon1 = point1
+    lat2, lon2 = point2
+    radius = 6371
+
+    deltaLat = math.radians(lat2-lat1)
+    deltaLon = math.radians(lon2-lon1)
+    
+    alpha = math.sin(deltaLat/2) * math.sin(deltaLat/2) + math.cos(math.radians(lat1)) \
+        * math.cos(math.radians(lat2)) * math.sin(deltaLon/2) * math.sin(deltaLon/2)
+    gamma = 2 * math.atan2(math.sqrt(alpha), math.sqrt(1-alpha))
+
+    distance = radius * gamma
+
+    return(distance)
+
+
 
 class GPXFile():
     '''Basic object to wrap a given GPX file.'''
@@ -43,7 +65,18 @@ class GPXFile():
         data["source"] = self.filename
         # note. Z here stands for zulu, which means UTC +0
 
+        data = self.enrichData( data )
+
         return(data)
+
+    def enrichData( self , data ):
+
+        distances = data[["latitude","longitude"]].copy()
+        distances = distances.join(distances.shift(-1),lsuffix="_1",rsuffix="_2").dropna()
+        data["distance"] = distances.apply(lambda x : haversine([x["latitude_1"],x["longitude_1"]],[x["latitude_2"],x["longitude_2"]]) , axis = 1)
+
+        return(data)
+
         
     def load( self , filePath ):
         '''load the raw GPX file as text.'''
