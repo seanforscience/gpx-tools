@@ -44,3 +44,24 @@ class HeatMap():
         output = output[[c for c in output.columns if c != "source"]]
         
         self.dressed = output
+
+class HistoricalHeatMap(HeatMap):
+    def __init__(self):
+    
+        self.dataPath = "/Volumes/TheMonster/GPS/Strava/"
+        self.path = "/Volumes/TheMonster/GPS/HeatMap/heatmap.csv"
+        print("loading...")
+        
+        try:
+            data = pd.read_csv(self.path)
+        except:
+            data = pd.DataFrame()
+            
+        HeatMap.__init__( self , data )
+        self.update()
+        
+    def update( self ):
+        
+        gpxFiles = [self.dataPath + x for x in os.listdir(self.dataPath) if x.startswith("2")]
+        self.compilation(gpxFiles)
+        self.export(self.path)
