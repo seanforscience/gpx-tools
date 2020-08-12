@@ -22,6 +22,7 @@ class HeatMap():
             data = GPXFile(file).points        
             print( "processing " + file + "...")
             self.data = pd.concat([self.data,data])
+            self.data.index = range(len(self.data))
             print("done.")
             
     def compilation( self , files ):

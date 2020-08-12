@@ -71,9 +71,11 @@ class GPXFile():
 
     def enrichData( self , data ):
 
-        distances = data[["latitude","longitude"]].copy()
+        distances = data[["latitude","longitude","elevation"]].copy()
         distances = distances.join(distances.shift(-1),lsuffix="_1",rsuffix="_2").dropna()
         data["distance"] = distances.apply(lambda x : haversine([x["latitude_1"],x["longitude_1"]],[x["latitude_2"],x["longitude_2"]]) , axis = 1)
+        data["elevation_change"] = distances.apply(lambda x : x["elevation_2"] - x["elevation_1"] , axis = 1)
+        data["vertical"] = data["elevation_change"].apply(lambda x : max(x,0))
 
         return(data)
 
